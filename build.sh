@@ -11,7 +11,7 @@ build () {
     TARGET=$2
 
     FIRMWARE_DIR="$TARGET/$BRANCH"  
-    BUILD_RESULT="BROKEN"
+    BUILD_RESULT="FAILED"
     DO_NOT_REPORT=false
 
     echo ""
