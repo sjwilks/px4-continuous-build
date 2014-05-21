@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PATH=/home/px4build/gcc-arm-none-eabi-4_6-2012q2/bin:$PATH
+export PATH=/home/px4build/gcc-arm-none-eabi/bin:$PATH
 BASE_DIR=/srv/www/px4.oznet.ch
 BUILD_DIR=/home/px4build/build
 
