@@ -51,12 +51,12 @@ build () {
     fi
 
     # The PX4 firmware requires NuttX. Go get the latest changes.
-    if [ "$TARGET" == "px4" ]; then
-      cd NuttX
-      git pull origin
-      git clean -d -f -x
-      cd ..
-    fi
+    #if [ "$TARGET" == "px4" ]; then
+    #  cd NuttX
+    #  git pull origin
+    #  git clean -d -f -x
+    #  cd ..
+    #fi
 
     git clean -d -f -x
 
@@ -85,7 +85,24 @@ build () {
       echo "$DOMAIN/$TARGET/$BRANCH/bin/$DATE-px4io-v1_default.bin" >> $REPORT
       echo "" >> $REPORT
 
-      make archives && make -j8 >> $BASE_DIR/$LOGFILE 2>&1
+      echo "make updatesubmodules"
+      make updatesubmodules >> $BASE_DIR/$LOGFILE 2>&1
+      if [ $? -gt 0 ]; then
+        echo "FAILED: make updatesubmodules"
+      fi
+
+      echo "make archives"
+      make archives >> $BASE_DIR/$LOGFILE 2>&1
+      if [ $? -gt 0 ]; then
+        echo "FAILED: make archives"
+      fi
+
+      echo "make -j8"
+      make -j8 >> $BASE_DIR/$LOGFILE 2>&1
+      if [ $? -gt 0 ]; then
+        echo "FAILED: make -j8"
+      fi
+
     elif [ "$TARGET" == "px4flow" ]; then
       # Build the PX4Flow firmware.
       echo "$DOMAIN/$TARGET/$BRANCH/bin/$DATE-px4flow.px4" >> $REPORT
