@@ -12,7 +12,9 @@ build () {
 
     FIRMWARE_DIR="$TARGET/$BRANCH"  
     BUILD_RESULT="FAILED"
+    BUILD_FAILED=false
     DO_NOT_REPORT=false
+
 
     echo ""
     echo "*******************************************************************"
@@ -88,28 +90,38 @@ build () {
       echo "make updatesubmodules"
       make updatesubmodules >> $BASE_DIR/$LOGFILE 2>&1
       if [ $? -gt 0 ]; then
-        echo "FAILED: make updatesubmodules"
+        echo "FAILED: make updatesubmodules" >> $BASE_DIR/$LOGFILE 2>&1
+        BUILD_FAILED=true
       fi
+
+      # TODO(sjwilks): We shouldn't proceed if there has been a build failure.
+      # Move the Email section below out of this function and return here.
 
       echo "make archives"
       make archives >> $BASE_DIR/$LOGFILE 2>&1
       if [ $? -gt 0 ]; then
-        echo "FAILED: make archives"
+        echo "FAILED: make archives" >> $BASE_DIR/$LOGFILE 2>&1
+        BUILD_FAILED=true
       fi
 
       echo "make -j8"
       make -j8 >> $BASE_DIR/$LOGFILE 2>&1
       if [ $? -gt 0 ]; then
-        echo "FAILED: make -j8"
+        echo "FAILED: make -j8" >> $BASE_DIR/$LOGFILE 2>&1
+        BUILD_FAILED=true
       fi
 
     elif [ "$TARGET" == "px4flow" ]; then
       # Build the PX4Flow firmware.
       echo "$DOMAIN/$TARGET/$BRANCH/bin/$DATE-px4flow.px4" >> $REPORT
       make  >> $BASE_DIR/$LOGFILE 2>&1
+      if [ $? -gt 0 ]; then
+        echo "FAILED: make" >> $BASE_DIR/$LOGFILE 2>&1
+        BUILD_FAILED=true
+      fi
     fi
 
-    if [ $? -eq 0 ]; then
+    if [ $BUILD_FAILED == false ]; then
       cp $BUILD_DIR/pass.png $BASE_DIR/$TARGET/$BRANCH/build_status.png
 
       if [ "$TARGET" == "px4" ]; then
