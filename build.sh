@@ -74,6 +74,9 @@ build () {
     echo "*******************************************************" >> $REPORT
     echo "" >> $REPORT
 
+    arm-none-eabi-gcc --version >> $REPORT
+    echo "" >> $REPORT
+
     cp $REPORT $BASE_DIR/$LOGFILE
 
     echo "Log: $DOMAIN/$LOGFILE" >> $REPORT
